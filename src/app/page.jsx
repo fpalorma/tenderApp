@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { useState, useEffect } from "react";
 import ForecastCard from "@/app/components/ForecastCard.jsx"
 
@@ -76,60 +75,26 @@ export default function Home() {
   }, [locationData]);
   return (
     <>
-    <div className="bg-peach-pastel max-w-fit p-4 m-auto  font-mono shadow-md mb-2 rounded-sm">
-    {/* {lat ? <p>lat= {lat}</p> : <p>Latitud pendiente</p>} */}
-      {/* {lon ? <p>lon= {lon}</p> : <p>longitud pendiente</p>} */}
-      {locationData ? (
-        <p>{zone}, {province}</p>
-      ) : (
-        <p>Localizando...</p>
-      )}
-      {forecast ? (
-        <p>
-          Temperatura máxima esperada:{" "}
-          {forecast.DailyForecasts[0].Temperature.Maximum.Value}°C
-        </p>
-      ) : (
-        <p>temperatura pendiente</p>
-      )}
-      {forecast ? (
-        <p>
-          Temperatura mínima esperada:{" "}
-          {forecast.DailyForecasts[0].Temperature.Minimum.Value}°C
-        </p>
-      ) : (
-        <p>temperatura pendiente</p>
-      )}
-      {
-        forecast?(
-          <p>{forecast.DailyForecasts[0].Day.LongPhrase}</p>
-        ):(<p>Cargando pronóstico</p>)
-      }
-      {forecast ? (
-      <>
-          {forecast.DailyForecasts[0].Day.HasPrecipitation ? (
-            <>
-            <p>Tender adentro</p>
-            <Image width="300" height="300"src="/tender-dentro.jpeg" alt="ropa secándose dentro de casa" />
-            </>
-          ) : (
-            <>
-            <p>Tender afuera</p>
-            <Image width="300" height="300"src="/tender-fuera.jpeg" alt="ropa secándose bajo el sol" />
-            </>
-          )}
-          </>
-      ) : (
-        <p>No hay datos de pronóstico disponibles.</p>
-      )}
-    </div>
+   
     
 
       {
-        locationData && forecast &&(
-          <div>
-    <ForecastCard zone={zone} province={province} locationData={locationData} Forecast={forecast} isRaining={forecast.DailyForecasts[0].Day.HasPrecipitation} phrase={forecast.DailyForecasts[0].Day.LongPhrase} tempMin={forecast.DailyForecasts[0].Temperature.Minimum.Value} tempMax={forecast.DailyForecasts[0].Temperature.Maximum.Value}/>
-        </div>)
+        locationData && forecast? (
+        
+    <ForecastCard zone={zone} province={province}  isRaining={forecast.DailyForecasts[0].Day.HasPrecipitation} phrase={forecast.DailyForecasts[0].Day.LongPhrase} tempMin={forecast.DailyForecasts[0].Temperature.Minimum.Value} tempMax={forecast.DailyForecasts[0].Temperature.Maximum.Value}/>
+        ):(
+          <div className="bg-peach-pastel max-w-fit p-4 m-auto  font-mono shadow-md mb-2 rounded-sm">
+        
+            <p>Localizando...</p>
+         
+            <p>temperatura pendiente</p>
+        
+            <p>temperatura pendiente</p>
+        <p>Cargando pronóstico</p>
+          
+            <p>No hay datos de pronóstico disponibles.</p>
+        </div>
+        )
       }
     
     </>
