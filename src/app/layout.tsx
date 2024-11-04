@@ -26,10 +26,22 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen min-h-screen`}
       >
-        <h1 className="text-center text-3xl text-red-700 font-bold mb-2">tender</h1>
-        <div className="absolute inset-0 top-0 z-[-2] min-h-screen w-fullbg-blue-700"></div>        {children}
+        <header className=" bg-white shadow-inner mb-2" style={{boxShadow: "0px -10px 12px -6px rgba(0,0,0,0.12) inset"}}>
+        <h1 className="text-center text-3xl text-red-700 font-bold  ">tender</h1>
+
+        </header>
+        
+        <main className="flex-grow">
+        {children}
+        </main>       
+        <footer className="bg-body-tertiary text-center text-lg-start w-full shadow-inner ">
+  <div className="text-center p-3" style={{ backgroundColor: "rgba(0, 0, 0, 0.05)" }}>
+    Hecho por
+    <a className="text-body" href="https://www.linkedin.com/in/federico-palorma-dev/" target="_blank" rel="noopener"> Federico Palorma</a>
+  </div>
+</footer>
       </body>
     </html>
   );
