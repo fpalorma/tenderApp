@@ -8,20 +8,14 @@ const ForecastCard = ({
   tempMax,
   zone,
   province,
+  isRainingAtNight,
 }) => {
   return (
-    <div className="bg-peach-pastel max-w-fit p-4 m-auto  font-mono shadow-md mb-2 rounded-sm text-black">
-      <p className="text-xl">{title}</p>
+    <div className="flex flex-col items-center mb-5 m-x-2 divide-y">
       <p>
         {zone}, {province}
       </p>
-
-      <p>Temperatura máxima esperada: {tempMax}°C</p>
-
-      <p>Temperatura mínima esperada: {tempMin}°C</p>
-
-      <p>{phrase}</p>
-
+      <p className="text-xl font-bold">{title}</p>
       {isRaining ? (
         <>
           <p>Tender adentro</p>
@@ -45,6 +39,23 @@ const ForecastCard = ({
           />
         </>
       )}
+      <div className="flex flex-col gap-2 justify-center items-center max-w-[300px] mt-2">
+        <p className="font-medium text-lg">Detalles:</p>
+        <div>
+
+        <p className="text-center">Máx: {tempMax}°C</p>
+        <p className="text-center">Min: {tempMin}°C</p>
+        </div>
+
+        <p className="text-center">{phrase}</p>
+      </div>
+      {
+        !isRaining && isRainingAtNight &&(
+          <>
+          <p className="text-red-600">Posibles tormentas hacia la noche</p>
+          </>
+        )
+      }
     </div>
   );
 };
