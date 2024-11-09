@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import ForecastCard from "@/app/components/ForecastCard.jsx";
+import LoadingCard from "@/app/components/LoadingCard.jsx"
 
 export default function Home() {
   const [lat, setLat] = useState(null);
@@ -83,23 +84,17 @@ export default function Home() {
          zone={zone}
          province={province}
          isRaining={forecast.DailyForecasts[isToday ? 0 : 1].Day.HasPrecipitation}
+         isRainingAtNight={forecast.DailyForecasts[isToday ? 0 : 1].Night.HasPrecipitation}
          phrase={forecast.DailyForecasts[isToday ? 0 : 1].Day.LongPhrase}
          tempMin={forecast.DailyForecasts[isToday ? 0 : 1].Temperature.Minimum.Value}
          tempMax={forecast.DailyForecasts[isToday ? 0 : 1].Temperature.Maximum.Value}
        />
       ) : (
-        <div className="bg-peach-pastel max-w-fit p-4 m-auto font-mono shadow-md mb-2 rounded-sm text-black">
-          <p className="text-xl">Pronóstico</p>
-          <p>Localizando...</p>
-          <p>temperatura pendiente...</p>
-          <p>temperatura pendiente...</p>
-          <p>Cargando pronóstico...</p>
-          <p>No hay datos de pronóstico disponibles...</p>
-        </div>
+        <LoadingCard/>
       )}
        {locationData && forecast &&(
 
-      <button onClick={toggleDay} className="mb-4 p-2 bg-peach-pastel text-black rounded hover:bg-orange-400 mx-auto block">
+      <button onClick={toggleDay} className="mb-4 p-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-auto block">
         Mostrar {isToday ? "Mañana" : "Hoy"}
       </button>
        )}
