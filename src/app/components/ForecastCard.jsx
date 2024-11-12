@@ -11,7 +11,7 @@ const ForecastCard = ({
   isRainingAtNight,
 }) => {
   return (
-    <div className="flex flex-col items-center mb-5 m-x-2 divide-y">
+    <div className="flex flex-col items-center mb-5 m-x-2 divide-y text-black dark:text-white">
       <p>
         {zone}, {province}
       </p>
