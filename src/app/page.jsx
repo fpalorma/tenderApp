@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import ForecastCard from "@/app/components/ForecastCard.jsx";
 import LoadingCard from "@/app/components/LoadingCard.jsx"
+import ErrorCard from "@/app/components/ErrorCard.jsx"
 
 export default function Home() {
   const [lat, setLat] = useState(null);
@@ -11,6 +12,7 @@ export default function Home() {
   const [zone, setZone] = useState(null);
   const [province, setProvince] = useState(null);
   const [isToday, setIsToday] = useState(true);
+  const[isError, setError] = useState(false)
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -23,6 +25,7 @@ export default function Home() {
         },
         (error) => {
           console.error("Error al obtener la geolocalización: ", error);
+          setError(true)
         }
       );
     } else {
@@ -32,7 +35,7 @@ export default function Home() {
   useEffect(() => {
     const fetchLocationData = async () => {
       if (lat !== null && lon !== null) {
-        console.log("Coordenadas:", lat, lon); // Verifica las coordenadas
+        console.log("Coordenadas:", lat, lon); 
         try {
           const response = await fetch(
             `/api/getLocationKey?lat=${lat}&lon=${lon}`
@@ -41,12 +44,13 @@ export default function Home() {
             throw new Error(`Error en la respuesta: ${response.statusText}`);
           }
           const data = await response.json();
-          console.log("Datos de ubicación:", JSON.stringify(data, null, 2)); // Formato legible
+          console.log("Datos de ubicación:", JSON.stringify(data, null, 2));
           setLocationData(data.Key);
           setProvince(data.AdministrativeArea.LocalizedName);
           setZone(data.LocalizedName);
         } catch (error) {
           console.error("Error al obtener los datos de ubicación:", error);
+          setError(true)
         }
       }
     };
@@ -55,7 +59,7 @@ export default function Home() {
   useEffect(() => {
     const fetchForecast = async () => {
       if (locationData !== null) {
-        console.log("location key is:", locationData); // Verifica locationData
+        console.log("location key is:", locationData);
         try {
           const response = await fetch(
             `/api/getForecast?locationKey=${locationData}`
@@ -64,10 +68,11 @@ export default function Home() {
             throw new Error(`Error en la respuesta: ${response.statusText}`);
           }
           const data = await response.json();
-          console.log("Forecast:", JSON.stringify(data, null, 2)); // Formato legible
+          console.log("Forecast:", JSON.stringify(data, null, 2));
           setForecast(data);
         } catch (error) {
           console.error("Error al obtener los datos de ubicación:", error);
+          setError(true)
         }
       }
     };
@@ -78,26 +83,27 @@ export default function Home() {
   };
   return (
     <>
-      {locationData && forecast ? (
-         <ForecastCard
-         title={isToday ? "Hoy" : "Mañana"}
-         zone={zone}
-         province={province}
-         isRaining={forecast.DailyForecasts[isToday ? 0 : 1].Day.HasPrecipitation}
-         isRainingAtNight={forecast.DailyForecasts[isToday ? 0 : 1].Night.HasPrecipitation}
-         phrase={forecast.DailyForecasts[isToday ? 0 : 1].Day.LongPhrase}
-         tempMin={forecast.DailyForecasts[isToday ? 0 : 1].Temperature.Minimum.Value}
-         tempMax={forecast.DailyForecasts[isToday ? 0 : 1].Temperature.Maximum.Value}
-       />
+{isError ? (
+        <ErrorCard />
+      ) : locationData && forecast ? (
+        <>
+          <ForecastCard
+            title={isToday ? "Hoy" : "Mañana"}
+            zone={zone}
+            province={province}
+            isRaining={forecast.DailyForecasts[isToday ? 0 : 1].Day.HasPrecipitation}
+            isRainingAtNight={forecast.DailyForecasts[isToday ? 0 : 1].Night.HasPrecipitation}
+            phrase={forecast.DailyForecasts[isToday ? 0 : 1].Day.LongPhrase}
+            tempMin={forecast.DailyForecasts[isToday ? 0 : 1].Temperature.Minimum.Value}
+            tempMax={forecast.DailyForecasts[isToday ? 0 : 1].Temperature.Maximum.Value}
+          />
+          <button onClick={toggleDay} className="mb-4 p-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-auto block">
+            Mostrar {isToday ? "Mañana" : "Hoy"}
+          </button>
+        </>
       ) : (
-        <LoadingCard/>
+        <LoadingCard />
       )}
-       {locationData && forecast &&(
-
-      <button onClick={toggleDay} className="mb-4 p-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-auto block">
-        Mostrar {isToday ? "Mañana" : "Hoy"}
-      </button>
-       )}
     </>
   );
 }
