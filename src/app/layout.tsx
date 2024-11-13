@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col  min-h-screen bg-slate-100 dark:bg-black`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col  min-h-screen bg-slate-100 dark:bg-zinc-950`}
       >
         <header className=" bg-white shadow-inner mb-2 dark:bg-black" style={{boxShadow: "0px -10px 12px -6px rgba(0,0,0,0.12) inset"}}>
         <h1 className="text-center text-3xl text-red-700 font-bold  ">tender</h1>
