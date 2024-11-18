@@ -24,7 +24,7 @@ export default function Home() {
           setLat(latitude);
           setLon(longitude);
         },
-        (error) => setError(true)
+        () => setError(true)
       );
     } else {
       setError(true);
