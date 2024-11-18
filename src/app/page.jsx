@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import ForecastCard from "@/app/components/ForecastCard.jsx";
-import LoadingCard from "@/app/components/LoadingCard.jsx"
-import ErrorCard from "@/app/components/ErrorCard.jsx"
+import LoadingCard from "@/app/components/LoadingCard.jsx";
+import ErrorCard from "@/app/components/ErrorCard.jsx";
 
 export default function Home() {
   const [lat, setLat] = useState(null);
@@ -12,92 +12,94 @@ export default function Home() {
   const [zone, setZone] = useState(null);
   const [province, setProvince] = useState(null);
   const [isToday, setIsToday] = useState(true);
-  const[isError, setError] = useState(false)
+  const [isError, setError] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
-          console.log(`Latitud: ${latitude}, Longitud: ${longitude}`);
           setLat(latitude);
           setLon(longitude);
         },
-        (error) => {
-          console.error("Error al obtener la geolocalización: ", error);
-          setError(true)
-        }
+        (error) => setError(true)
       );
     } else {
-      console.error("Geolocalización no soportada por este navegador.");
+      setError(true);
     }
   }, []);
+
   useEffect(() => {
     const fetchLocationData = async () => {
       if (lat !== null && lon !== null) {
-        console.log("Coordenadas:", lat, lon); 
         try {
-          const response = await fetch(
-            `/api/getLocationKey?lat=${lat}&lon=${lon}`
-          );
-          if (!response.ok) {
-            throw new Error(`Error en la respuesta: ${response.statusText}`);
-          }
+          const response = await fetch(`/api/getLocationKey?lat=${lat}&lon=${lon}`);
+          if (!response.ok) throw new Error(`Error en la respuesta: ${response.statusText}`);
           const data = await response.json();
-          console.log("Datos de ubicación:", JSON.stringify(data, null, 2));
           setLocationData(data.Key);
           setProvince(data.AdministrativeArea.LocalizedName);
           setZone(data.LocalizedName);
-        } catch (error) {
-          console.error("Error al obtener los datos de ubicación:", error);
-          setError(true)
+        } catch {
+          setError(true);
         }
       }
     };
     fetchLocationData();
   }, [lat, lon]);
+
   useEffect(() => {
     const fetchForecast = async () => {
       if (locationData !== null) {
-        console.log("location key is:", locationData);
         try {
-          const response = await fetch(
-            `/api/getForecast?locationKey=${locationData}`
-          );
-          if (!response.ok) {
-            throw new Error(`Error en la respuesta: ${response.statusText}`);
-          }
+          const response = await fetch(`/api/getForecast?locationKey=${locationData}`);
+          if (!response.ok) throw new Error(`Error en la respuesta: ${response.statusText}`);
           const data = await response.json();
-          console.log("Forecast:", JSON.stringify(data, null, 2));
           setForecast(data);
-        } catch (error) {
-          console.error("Error al obtener los datos de ubicación:", error);
-          setError(true)
+        } catch {
+          setError(true);
         }
       }
     };
     fetchForecast();
   }, [locationData]);
+
   const toggleDay = () => {
-    setIsToday((prevIsToday) => !prevIsToday);
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setIsToday((prevIsToday) => !prevIsToday);
+      setIsTransitioning(false);
+    }, 200); 
   };
+
   return (
     <>
-{isError ? (
+      {isError ? (
         <ErrorCard />
       ) : locationData && forecast ? (
         <>
-          <ForecastCard
-            title={isToday ? "Hoy" : "Mañana"}
-            zone={zone}
-            province={province}
-            isRaining={forecast.DailyForecasts[isToday ? 0 : 1].Day.HasPrecipitation}
-            isRainingAtNight={forecast.DailyForecasts[isToday ? 0 : 1].Night.HasPrecipitation}
-            phrase={forecast.DailyForecasts[isToday ? 0 : 1].Day.LongPhrase}
-            tempMin={forecast.DailyForecasts[isToday ? 0 : 1].Temperature.Minimum.Value}
-            tempMax={forecast.DailyForecasts[isToday ? 0 : 1].Temperature.Maximum.Value}
-          />
-          <button onClick={toggleDay} className="mb-4 p-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-auto block">
+          <div
+            className={`transition-opacity duration-200 ${
+              isTransitioning ? "opacity-0" : "opacity-100"
+            }`}
+          >
+            <ForecastCard
+              title={isToday ? "Hoy" : "Mañana"}
+              zone={zone}
+              province={province}
+              isRaining={forecast.DailyForecasts[isToday ? 0 : 1].Day.HasPrecipitation}
+              isRainingAtNight={forecast.DailyForecasts[isToday ? 0 : 1].Night.HasPrecipitation}
+              phrase={forecast.DailyForecasts[isToday ? 0 : 1].Day.LongPhrase}
+              tempMin={forecast.DailyForecasts[isToday ? 0 : 1].Temperature.Minimum.Value}
+              tempMax={forecast.DailyForecasts[isToday ? 0 : 1].Temperature.Maximum.Value}
+              tenderFueraImg={isToday? "/tender-fuera.jpeg":"/tender-fuera2.webp"}
+            />
+          </div>
+          <button
+            onClick={toggleDay}
+            className="mb-4 p-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-auto block"
+          >
             Mostrar {isToday ? "Mañana" : "Hoy"}
           </button>
         </>
