@@ -9,6 +9,7 @@ const ForecastCard = ({
   zone,
   province,
   isRainingAtNight,
+  tenderFueraImg
 }) => {
   return (
     <div className="flex flex-col items-center mb-5 mt-2 m-x-2 divide-y text-black dark:text-white">
@@ -33,7 +34,7 @@ const ForecastCard = ({
           <Image
             width="300"
             height="300"
-            src="/tender-fuera.jpeg"
+            src={tenderFueraImg}
             alt="ropa secándose bajo el sol"
             priority
           />
