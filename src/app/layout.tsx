@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import Image from "next/image";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -28,8 +29,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col  min-h-screen bg-slate-100 dark:bg-[#121212]`}
       >
-        <header className=" bg-white shadow-inner mb-2 dark:bg-black" style={{boxShadow: "0px -10px 12px -6px rgba(0,0,0,0.12) inset"}}>
-        <h1 className="text-center text-3xl text-red-700 font-bold  ">tender</h1>
+        <header className=" flex flex-row items-center justify-center bg-white shadow-inner mb-2 dark:bg-black py-1" style={{boxShadow: "0px -10px 12px -6px rgba(0,0,0,0.12) inset"}}>
+        <Image alt="icon" src="/clothespin-svgrepo-com.svg" width="30" height="30"/>
+        <h1 className=" text-3xl text-red-700 font-bold  "> tender</h1>
 
         </header>
         
