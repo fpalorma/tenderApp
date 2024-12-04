@@ -3,17 +3,16 @@ import { useState, useEffect } from "react";
 import ForecastCard from "@/app/components/ForecastCard.jsx";
 import LoadingCard from "@/app/components/LoadingCard.jsx";
 import ErrorCard from "@/app/components/ErrorCard.jsx";
+import {useGetLocation} from "@/app/hooks/useGetLocation.js"
 
 export default function Home() {
   const [lat, setLat] = useState(null);
   const [lon, setLon] = useState(null);
-  const [locationData, setLocationData] = useState(null);
   const [forecast, setForecast] = useState(null);
-  const [zone, setZone] = useState(null);
-  const [province, setProvince] = useState(null);
   const [isToday, setIsToday] = useState(true);
   const [isError, setError] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const { locationData, zone, province} = useGetLocation({lat, lon})
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -30,24 +29,6 @@ export default function Home() {
       setError(true);
     }
   }, []);
-
-  useEffect(() => {
-    const fetchLocationData = async () => {
-      if (lat !== null && lon !== null) {
-        try {
-          const response = await fetch(`/api/getLocationKey?lat=${lat}&lon=${lon}`);
-          if (!response.ok) throw new Error(`Error en la respuesta: ${response.statusText}`);
-          const data = await response.json();
-          setLocationData(data.Key);
-          setProvince(data.AdministrativeArea.LocalizedName);
-          setZone(data.LocalizedName);
-        } catch {
-          setError(true);
-        }
-      }
-    };
-    fetchLocationData();
-  }, [lat, lon]);
 
   useEffect(() => {
     const fetchForecast = async () => {
